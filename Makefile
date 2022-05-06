@@ -8,7 +8,7 @@ FLAG = -O3
 all: libParade mydemos
 
 libParade: \
-	$(OBJ)/lista.o 
+	$(OBJ)/lista.o \
 
 mydemos: clean_demo \
 	$(BIN)/main

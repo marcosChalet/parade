@@ -1,17 +1,7 @@
 #ifndef _LISTA_H
 #define _LISTA_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-
-struct aluno {
-    char nome[50];
-    int matricula;
-    float av1;
-    float av2;
-    float av3;
-};
+#include "includes.h"
 
 typedef struct elemento* Lista;
 
