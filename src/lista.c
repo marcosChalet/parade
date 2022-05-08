@@ -10,8 +10,8 @@
 #include "lista.h"
 
 typedef struct elemento {
-    struct aluno dados;
-    struct elemento *prox;
+  Carta dados;
+  struct elemento *prox;
 }Elemento;
 
 typedef struct elemento Elemento;
@@ -22,198 +22,147 @@ typedef struct elemento Elemento;
  *
  * */
 
-Lista* criaLista () {
+Lista* criarLista () {
 
-    Lista *ldse;
-    ldse = (Lista*)malloc(sizeof(Lista));
+  Lista *ldse;
+  ldse = (Lista*)malloc(sizeof(Lista));
 
-    if (ldse != NULL)
-            *ldse = NULL;
+  if (ldse != NULL)
+    *ldse = NULL;
 
-    return ldse;
+  return ldse;
 }
 
 
 /* Verifica se a lista está vazia ou foi alocada */
-bool Listavazia (Lista *ldse) {
-    if((*ldse) != NULL)
-        return false;
+int Listavazia (Lista *ldse) {
+  if((*ldse) != NULL)
+    return 0;
 
-    return true;
+  return 1;
 }
 
 
-bool insereInicio (Lista *ldse, struct aluno novosDados) {
+int inserirInicio (Lista *ldse, Carta novosDados) {
 
-    if(ldse == NULL) {
-        return false;
-    }else {
-        Elemento *novo = (Elemento*)malloc(sizeof(Elemento));
-        if(novo == NULL) return false;
-
-        novo->dados = novosDados;
-        novo->prox = (*ldse);
-        (*ldse) = novo;
-    }
-
-    return true;
-}
-
-
-bool insereFim (Lista *ldse, struct aluno novosDados) {
-
-    if(ldse == NULL) {
-        return false;
-    }
-
+  if(ldse == NULL) {
+    return 0;
+  }else {
     Elemento *novo = (Elemento*)malloc(sizeof(Elemento));
-    if(novo == NULL) return false;
+    if(novo == NULL) return 0;
 
     novo->dados = novosDados;
-    novo->prox = NULL;
-    if((*ldse) == NULL) {
-        (*ldse) = novo;
-    }else {
-        Elemento *aux = (*ldse);
-        while(aux->prox != NULL)
-                aux = aux->prox;
-        aux->prox = novo;
-    }
+    novo->prox = (*ldse);
+    (*ldse) = novo;
+  }
 
-    return true;
+  return 1;
 }
 
 
-void destroiLista (Lista *ldse) {
-    if(ldse != NULL) {
-        Elemento *aux;
-        while((*ldse) != NULL) {
-            aux = *ldse;
-            (*ldse) = (*ldse)->prox;
-            free(aux);
-        }
+void destruirLista (Lista *ldse) {
+  if(ldse != NULL) {
+    Elemento *aux;
+    while((*ldse) != NULL) {
+      aux = *ldse;
+      (*ldse) = (*ldse)->prox;
+      free(aux);
     }
+  }
 }
 
 
-bool removeElemento (Lista *ldse, int x) {
-
-    if(Listavazia(ldse)) {
-        return false;
-
-    }else if((*ldse)->dados.matricula == x) {
-        Elemento *aux = (*ldse);
-        (*ldse) = (*ldse)->prox;
-        free(aux);
-    }else {
-
-        Elemento *aux, *ant;
-        aux = (*ldse);
-        while(aux && aux->dados.matricula != x) {
-            ant = aux;
-            aux = aux->prox;
-        }
-
-        if(aux == NULL) return false;
-
-        ant->prox = aux->prox;
-        free(aux);
-    }
-
-    return true;
+bool cartasIguais (Carta a, Carta b) {
+  if (a.numero != b.numero || a.naipe != b.naipe)
+    return false;
+  return true;
 }
 
 
-bool removeInicio (Lista *ldse) {
+int removerQualquer (Lista *ldse, Carta cartaRm) {
 
-    if(ldse == NULL) return false;
-    if(*ldse == NULL) return false;
+  if (Listavazia(ldse)) {
+    return 0;
+
+  }else if (cartasIguais((*ldse)->dados, cartaRm)) {
 
     Elemento *aux = *ldse;
     *ldse = (*ldse)->prox;
     free(aux);
 
-    return true;
+  }else {
+
+    Elemento *aux, *ant;
+    aux = *ldse;
+    while(aux && !cartasIguais(aux->dados, cartaRm)) {
+      ant = aux;
+      aux = aux->prox;
+    }
+
+    if(aux == NULL) return 0;
+
+    ant->prox = aux->prox;
+    free(aux);
+  }
+
+  return 1;
 }
 
 
-bool removeFim (Lista *ldse) {
+int acessarIndice (Lista *ldse, int pos, Carta *ptCarta) {
 
-    if(ldse == NULL) return false;
-    if(*ldse == NULL) return false;
-
-    Elemento *aux =  (*ldse);
-    if((*ldse)->prox == NULL) {
-        *ldse = (*ldse)->prox;
-        free(aux);
-    }else {
-        Elemento *ant = *ldse;
-        aux = ant->prox;
-        while(aux->prox != NULL) {
-            ant = ant->prox;
-            aux = aux->prox;
-        }
-
-        ant->prox = aux->prox;
-        free(aux);
+  if (Listavazia(ldse)) {
+    return 0;
+  }else if (pos < 0) {
+    return 0;
+  }else {
+    Elemento *aux = *ldse;
+    int cont = 0;
+    while(aux && cont != pos) {
+      aux = aux->prox;
     }
 
-    return true;
+    if (aux != NULL) {
+      *ptCarta = aux->dados;
+    }
+  }
+
+  return 1;
 }
 
 
-bool acessaIndice (Lista *ldse, int pos, struct aluno *aluno) {
-
-    if(Listavazia(ldse)) {
-        return false;
-    }else if(pos < 0) {
-        return false;
-    }else {
-        Elemento *aux = (*ldse);
-        int cont = 0;
-        while(aux && cont != pos) {
-            aux = aux->prox;
-        }
-
-        if(aux != NULL) {
-            (*aluno) = aux->dados;
-        }
-    }
-
-    return true;
+int quantidade (Lista *ldse) {
+  Elemento *aux = *ldse;
+  int cont = 0;
+  while(aux) {
+    cont++;
+    aux = aux->prox;
+  }
+  return cont;
 }
 
 
-bool acessaValor (Lista *ldse, int x, struct aluno *aluno) {
-
-    if(Listavazia(ldse)) {
-        return false;
-    }else {
-        Elemento *aux = (*ldse);
-        while(aux && aux->dados.matricula != x) {
-            aux = aux->prox;
-        }
-
-        if(aux == NULL)
-            return false;
-
-        (*aluno) = aux->dados;
-    }
-
-    return true;
+int somarValores (Lista *ldse) {
+  Elemento *aux = *ldse;
+  int total = 0;
+  while(aux) {
+    total += aux->dados.numero;
+    aux = aux->prox;
+  }
+  return total;
 }
 
 
-void mostraLista (Lista *ldse) {
-    if(ldse == NULL) return;
-    if((*ldse) == NULL) return;
+void mostrarLista (Lista *ldse) {
+  if(ldse == NULL) return;
+  if((*ldse) == NULL) return;
 
-    Elemento *aux = (*ldse);
-    printf("Lista -> ");
-    while(aux) {
-        printf("[%d] -> ", aux->dados.matricula);
-        aux = aux->prox;
-    }
-    printf("||\n");
+  Elemento *aux = (*ldse);
+  printf("Lista -> ");
+  while(aux) {
+    printf("[%d,%c] -> ", aux->dados.numero, aux->dados.naipe);
+    aux = aux->prox;
+  }
+  printf("||\n");
 }
 

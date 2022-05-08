@@ -5,20 +5,15 @@
 
 typedef struct elemento* Lista;
 
-Lista* criaLista ();
-bool listaVazia (Lista *);
+Lista* criarLista ();
 
-bool insereInicio (Lista *, struct aluno);
-bool insereFim (Lista *, struct aluno);
+int inserirInicio (Lista *, Carta);
+void destruirLista (Lista *);
+int removerQualquer (Lista *, Carta);
+int acessarIndice (Lista *, int, Carta *);
+int quantidade (Lista *);
+int somarValores (Lista *);
 
-void destoiLista (Lista *);
-bool removeElemento (Lista *, int);
-bool removeInicio (Lista *);
-bool removeFim (Lista *);
-
-bool acessaIndice (Lista *, int, struct aluno *);
-bool acessaValor (Lista *, int, struct aluno *);
-
-void mostraLista (Lista *);
+void mostrarLista (Lista *);
 
 #endif
