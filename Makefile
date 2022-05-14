@@ -9,6 +9,7 @@ all: libParade mydemos
 
 libParade: \
 	$(OBJ)/lista.o \
+	$(OBJ)/pilha.o
 
 mydemos: clean_demo \
 	$(BIN)/main

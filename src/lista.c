@@ -72,14 +72,21 @@ void destruirLista (Lista *ldse) {
 }
 
 
-bool cartasIguais (Carta a, Carta b) {
-  if (a.numero != b.numero || a.naipe != b.naipe)
-    return false;
-  return true;
+bool exatamenteIguais (Carta a, Carta b) {
+  if (a.numero == b.numero || a.naipe == b.naipe)
+    return true;
+  return false;
 }
 
 
-int removerQualquer (Lista *ldse, Carta cartaRm) {
+bool parcialmenteIguais (Carta a, Carta b) {
+  if (a.numero <= b.numero || a.naipe == b.naipe) 
+    return true;
+  return false;
+}
+
+
+int removerQualquer (Lista *ldse, Carta cartaRm, bool cartasIguais(Carta a, Carta b)) {
 
   if (Listavazia(ldse)) {
     return 0;
@@ -120,6 +127,7 @@ int acessarIndice (Lista *ldse, int pos, Carta *ptCarta) {
     int cont = 0;
     while(aux && cont != pos) {
       aux = aux->prox;
+      cont++;
     }
 
     if (aux != NULL) {
@@ -158,11 +166,59 @@ void mostrarLista (Lista *ldse) {
   if((*ldse) == NULL) return;
 
   Elemento *aux = (*ldse);
-  printf("Lista -> ");
   while(aux) {
-    printf("[%d,%c] -> ", aux->dados.numero, aux->dados.naipe);
+    printf("[%-2d %c] -> ", aux->dados.numero, aux->dados.naipe);
     aux = aux->prox;
   }
-  printf("||\n");
+}
+
+
+int buscar (Lista *lst, Carta *carta, bool cmp(Carta a, Carta b)) {
+
+  if(lst == NULL)  return 0;
+  if(*lst == NULL) return 0;
+
+  Elemento *aux = *lst;
+
+  bool encontrei;
+  do {
+    encontrei = cmp(aux->dados, *carta);
+    if(encontrei){
+      *carta = aux->dados;
+    }else {
+      aux = aux->prox;
+    }
+
+  }while (aux && !encontrei);
+
+  return 1;
+}
+
+
+void pegaDesprotegida (Lista* mao, Lista* mesa, Carta carta) {
+
+  Elemento *aux = *mesa, *final = NULL;
+  Lista* mesaDesprotegida = criarLista();
+  int total = carta.numero;
+
+  while (total-- >= 0 && aux) {
+    final = aux;
+    aux = aux->prox;
+  }
+
+  int ret;
+  Carta cartaAux;
+  do {
+    cartaAux = carta;
+    buscar(&aux, &cartaAux, parcialmenteIguais);
+    ret = removerQualquer(&aux, carta, parcialmenteIguais);
+    if(ret == 1) {
+      inserirInicio(mao, cartaAux);
+    }
+  }while(ret == 1);
+
+  if(final != NULL)
+    final->prox = aux;
+
 }
 
